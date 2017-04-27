@@ -6,7 +6,7 @@ docs:
 	cd docs && make html
 
 unittest:
-	pytest -s
+	coverage run --source=april setup.py test
 
 clean:
 	find . -name "*.pyc" -exec rm -f {} \;
