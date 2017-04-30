@@ -8,5 +8,7 @@ docs:
 unittest:
 	coverage run --source=april setup.py test
 
+test: unittest
+
 clean:
 	find . -name "*.pyc" -exec rm -f {} \;

@@ -11,6 +11,16 @@ class ModelMeta(type):
 
 
 class Model(metaclass=ModelMeta):
+    """
+
+    Usage::
+
+        from april import Model
+        class UserModel(Model):
+            name = str
+
+        user = UserModel(name='xxx')
+    """
 
     def __init__(self, *args, **kwargs):
         pass
