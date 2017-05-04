@@ -3,14 +3,12 @@ from unittest import TestCase
 from april import Model
 
 
-class ModelTest(TestCase):
+class TestModel(TestCase):
 
     def test_usage(self):
 
-        class UserObj(Model):
+        class UserModel(Model):
             name = str
 
-        user = UserObj(name='xxx')
-        import ipdb
-        ipdb.set_trace()
-        self.assertEqual(user.name, 'xxx')
+        # user = UserModel(name='Tom')
+        # self.assertEqual(user.name, 'Tom')
