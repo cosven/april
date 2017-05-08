@@ -10,6 +10,8 @@ simplified data deserialization
 - simple type validation
 - python object serialization and data deserialization
 
+**temporarily python3 only.**
+
 ## Usage
 
 ### simple usage
