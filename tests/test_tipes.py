@@ -24,3 +24,7 @@ class TestTipes(TestCase):
         """when listof_class initialized with a object which is not a list"""
         listof_str = listof(str)
         self.assertRaises(TypeError, listof_str, 'name')
+
+    def test_isinstance(self):
+        listof_str = listof(str)
+        listof_str(['hello', 'world'])

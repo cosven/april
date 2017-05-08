@@ -1,6 +1,8 @@
 from unittest import TestCase
 
 from april import Model
+from april.tipes import listof
+from april.class_registry import get_class
 
 
 class TestModel(TestCase):
@@ -41,3 +43,15 @@ class TestModel(TestCase):
 
         self.assertRaises(TypeError, define_model)
 
+    def test_composite_filed_success(self):
+
+        class UserModel(Model):
+            phones = listof(int)
+
+        UserModel(phones=[1, 2])
+
+    def test_composite_filed_failed(self):
+        class UserModel(Model):
+            phones = listof(int)
+
+        self.assertRaises(TypeError, UserModel, phones=['1', '2'])
