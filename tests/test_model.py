@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from april import Model
 from april.tipes import listof
-from april.class_registry import get_class
 
 
 class TestModel(TestCase):
@@ -19,6 +18,29 @@ class TestModel(TestCase):
         user = UserModel(name='Tom', phones=[123, 234])
         self.assertEqual(user.name, 'Tom')
         self.assertEqual(user.phones, [123, 234])
+
+    def test_usage_2(self):
+        class AlbumModel(Model):
+            name = str
+
+        class SongModel(Model):
+            name = str
+            album = AlbumModel
+
+        song = SongModel(name='i love you', album={'name': 'years'})
+        self.assertEqual(song.album.name, 'years')
+
+    def test_usage_3(self):
+        class ArtistModel(Model):
+            name = str
+
+        class SongModel(Model):
+            name = str
+            artists = listof(ArtistModel)
+
+        song = SongModel(name=u'朋友',
+                         artists=[{'name': u'谭咏麟'}, {'name': u'周华健'}])
+        self.assertEquals(song.artists[0].name, u'谭咏麟')
 
     def test_init_with_wrong_type(self):
         class UserModel(Model):

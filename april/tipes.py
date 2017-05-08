@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import inspect
+from .models import Model
 
 
 __all__ = ('listof')
@@ -18,14 +19,30 @@ class BaseNestedType(object):
         return obj_list
 
     @classmethod
-    def validate_instance(cls, instance):
-        """check if the type of instance match with cls"""
-        if not isinstance(instance, list):
+    def deserialize(cls, value):
+        """deserialize value to listof nested type object
+
+        Example::
+
+            class ArtistModel(Model):
+                name = str
+
+            listof_ArtistModel = listof(ArtistModel)
+            artists = llistof_ArtistModel.deserialize([{'name': 'hybrid'}])
+        """
+
+        if not isinstance(value, list):
             raise TypeError('instance should be a list')
-        for obj in instance:
-            ntype = cls.get_ntype()
-            if not isinstance(obj, ntype):
-                raise TypeError("list element should be '%s'" % ntype.__class__)
+
+        if issubclass(cls._ntype, Model):
+            return [cls._ntype.deserialize(each) for each in value]
+
+        serialized_data = []
+        for each in value:
+            if not isinstance(each, cls._ntype):
+                raise TypeError("list element should be '%s'" % cls._ntype)
+            serialized_data.append(cls._ntype(each))
+        return serialized_data
 
     @classmethod
     def get_ntype(cls):
