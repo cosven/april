@@ -6,7 +6,7 @@ docs:
 	cd docs && make html
 
 unittest:
-	coverage run --source=april setup.py test
+	coverage run --source=april setup.py test && coverage report
 
 test: unittest
 
