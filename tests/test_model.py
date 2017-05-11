@@ -47,7 +47,7 @@ class TestModel(TestCase):
         class UserModel(Model):
             name = str
 
-        self.assertRaises(TypeError, UserModel, name=0)
+        self.assertRaises(ValidationError, UserModel, name=0)
 
     def test_lack_of_required_field(self):
 
@@ -77,4 +77,20 @@ class TestModel(TestCase):
         class UserModel(Model):
             phones = listof(int)
 
-        self.assertRaises(TypeError, UserModel, phones=['1', '2'])
+        self.assertRaises(ValidationError, UserModel, phones=['1', '2'])
+
+    def test_serialize(self):
+        class UserModel(Model):
+            name = str
+
+        user = UserModel(name='lucy')
+        data = user.serialize()
+        self.assertEqual(data['name'], 'lucy')
+
+    def test_validate_not_a_field_attr(self):
+        class UserModel(Model):
+            name = str
+            msg = 'hello world'
+
+        UserModel.validate({'name': 'lucy', 'strict': True})
+        UserModel.validate_field('msg', 'nonono')
