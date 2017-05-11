@@ -2,6 +2,7 @@
 
 import inspect
 from .models import Model
+from .exceptions import ValidationError
 
 
 __all__ = ('listof')
@@ -30,19 +31,28 @@ class BaseNestedType(object):
             listof_ArtistModel = listof(ArtistModel)
             artists = llistof_ArtistModel.deserialize([{'name': 'hybrid'}])
         """
-
-        if not isinstance(value, list):
-            raise TypeError('instance should be a list')
+        cls.validate(value)
 
         if issubclass(cls._ntype, Model):
             return [cls._ntype.deserialize(each) for each in value]
 
         serialized_data = []
         for each in value:
-            if not isinstance(each, cls._ntype):
-                raise TypeError("list element should be '%s'" % cls._ntype)
             serialized_data.append(cls._ntype(each))
         return serialized_data
+
+    @classmethod
+    def validate(cls, data):
+        if not isinstance(data, list):
+            raise ValidationError('data should be a list')
+
+        for each in data:
+            if issubclass(cls._ntype, Model):
+                cls._ntype.validate(each)
+                continue
+
+            if not isinstance(each, cls._ntype):
+                raise ValidationError("list element should be '%s'" % cls._ntype)
 
     @classmethod
     def get_ntype(cls):

@@ -50,39 +50,74 @@ class Model(object, metaclass=ModelMeta):
     def __init__(self, **kwargs):
         super().__init__()
 
-        fields_dict = dict(self._fields)
-
-        # validate required field
-        _optional_fields = self._optional_fields
-        for key, ftype in fields_dict.items():
-            if key not in _optional_fields and key not in kwargs:
-                raise ValidationError("data missing required field: '%s'" % key)
+        self.validate(kwargs)
 
         # deserialize each field
         for key, value in kwargs.items():
-
-            ftype = fields_dict[key]
-
-            # if field type is subclass of Model, convert the value to
-            # instance of the subclass
-            if issubclass(ftype, Model):
-                value = ftype.deserialize(value)
-
-            if is_nested_type(ftype):
-                value = ftype.deserialize(value)
-            else:
-                if not isinstance(value, ftype):
-                    raise TypeError("'%s' should be '%s'" % (value, ftype.__class__))
-
+            if self._is_field(key):
+                value = self.deserialize_field(key, value)
             self.__dict__[key] = value
 
         self._data = kwargs
 
     @classmethod
     def deserialize(cls, data):
-        if not isinstance(data, dict):
-            raise TypeError("'data' should be a dict")
+        cls.validate(data)
         return cls(**data)
 
     def serialize(self):
         return self._data
+
+    @classmethod
+    def validate(cls, data):
+        if not isinstance(data, dict):
+            raise ValidationError("'data' should be a dict")
+        # validate required field
+        fields_dict = dict(cls._fields)
+        _optional_fields = cls._optional_fields
+        for key, ftype in fields_dict.items():
+            if key not in _optional_fields and key not in data:
+                raise ValidationError("data missing required field: '%s'" % key)
+
+        for name, value in data.items():
+            if cls._is_field(name):
+                cls.validate_field(name, value)
+
+    @classmethod
+    def deserialize_field(cls, name, value):
+        fields_dict = dict(cls._fields)
+        ftype = fields_dict[name]
+
+        # if field type is subclass of Model, convert the value to
+        # instance of the subclass
+        if issubclass(ftype, Model):
+            value = ftype.deserialize(value)
+        if is_nested_type(ftype):
+            value = ftype.deserialize(value)
+        return value
+
+    @classmethod
+    def validate_field(cls, name, value):
+        fields_dict = dict(cls._fields)
+        if not cls._is_field(name):
+            return
+
+        ftype = fields_dict[name]
+
+        if issubclass(ftype, Model):
+            ftype.validate(value)
+            return
+
+        if is_nested_type(ftype):
+            ftype.validate(value)
+        else:
+            if not isinstance(value, ftype):
+                raise ValidationError("'%s' should be '%s'" % (value, ftype.__class__))
+
+    @classmethod
+    def _is_field(cls, name):
+        return name in dict(cls._fields)
+
+    def __setattr__(self, name, value):
+        """modify self._data when field attr changes"""
+        object.__setattr__(self, name, value)
