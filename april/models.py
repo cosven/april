@@ -71,7 +71,8 @@ class Model(object, metaclass=ModelMeta):
     @classmethod
     def validate(cls, data):
         if not isinstance(data, dict):
-            raise ValidationError("'data' should be a dict")
+            raise ValidationError(
+                "{0}: data should be a dict, but it is a {1}".foramt(cls.__name__, type(data)))
         # validate required field
         fields_dict = dict(cls._fields)
         _optional_fields = cls._optional_fields
