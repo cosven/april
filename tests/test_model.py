@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from april import Model
 from april.tipes import listof
+from april.exceptions import ValidationError
 
 
 class TestModel(TestCase):
@@ -48,12 +49,12 @@ class TestModel(TestCase):
 
         self.assertRaises(TypeError, UserModel, name=0)
 
-    def test_init_with_unknown_field(self):
+    def test_lack_of_required_field(self):
 
         class UserModel(Model):
             name = str
 
-        self.assertRaises(TypeError, UserModel, age=0)
+        self.assertRaises(ValidationError, UserModel, age=0)
 
     def test_optional_field_not_a_tuple_or_list(self):
 
