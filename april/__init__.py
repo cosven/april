@@ -1,5 +1,5 @@
 from .models import Model  # noqa
 
 
-__version__ = '0.0.1a'
+__version__ = '0.0.1a2'
 __all__ = ('Model')
