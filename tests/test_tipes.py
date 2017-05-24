@@ -1,9 +1,10 @@
 from unittest import TestCase
 
+from april.exceptions import ValidationError
 from april.tipes import listof
 
 
-class TestTipes(TestCase):
+class TestListof(TestCase):
 
     def test_listof(self):
         listof_str = listof(str)
@@ -24,6 +25,10 @@ class TestTipes(TestCase):
         """when listof_class initialized with a object which is not a list"""
         listof_str = listof(str)
         self.assertRaises(TypeError, listof_str, 'name')
+
+    def test_listof_5(self):
+        listof_str = listof(str)
+        self.assertRaises(ValidationError, listof_str.deserialize, 'name')
 
     def test_isinstance(self):
         listof_str = listof(str)

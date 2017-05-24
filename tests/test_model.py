@@ -87,6 +87,12 @@ class TestModel(TestCase):
         data = user.serialize()
         self.assertEqual(data['name'], 'lucy')
 
+    def test_deserialize_not_a_dict(self):
+        class UserModel(Model):
+            name = str
+
+        self.assertRaises(ValidationError, UserModel.deserialize, 'lucy')
+
     def test_validate_not_a_field_attr(self):
         class UserModel(Model):
             name = str
@@ -110,3 +116,28 @@ class TestModel(TestCase):
         user = UserModel(name='lucy', age=11, car={'trade_mark': 'benzi'})
         self.assertEqual(user.name, 'lucy')
         self.assertEqual(user.car.trade_mark, 'benzi')
+
+    def test_inherit_optional_feilds(self):
+
+        class BaseUserModel(Model):
+            name = str
+
+            _optional_fields = ['name']
+
+        class UserModel(BaseUserModel):
+            age = int
+
+        UserModel(age=11)
+
+    def test_inherit_override_optional_feilds(self):
+        class BaseUserModel(Model):
+            name = str
+
+            _optional_fields = ['name']
+
+        class UserModel(BaseUserModel):
+            age = int
+
+            _optional_fields = ['age']
+
+        self.assertRaises(ValidationError, UserModel, age=11)

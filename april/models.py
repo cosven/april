@@ -12,6 +12,7 @@ class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
         _fields = list()
 
+        # get parent fileds
         for base in bases:
             tmp_fields = base._fields if hasattr(base, '_fields') else []
             _fields.extend(tmp_fields)
@@ -21,11 +22,20 @@ class ModelMeta(type):
             if inspect.isclass(ftype):
                 _fields.append((key, ftype))
 
+        _fields = list(set(_fields))
+
         # validate ``_optional_fields`` value type
         _optional_fields = attrs.get('_optional_fields', [])
         if _optional_fields is not None:
             if not isinstance(_optional_fields, (list, tuple)):
                 raise TypeError('_optional_fields should be a list')
+
+        # if _optional_fields is not specified, try to use parent's _optional_fields
+        if not _optional_fields:
+            for base in reversed(bases):
+                if hasattr(base, '_optional_fields'):
+                    _optional_fields.extend(base._optional_fields)
+
         # pop field from attributes
         for key, ftype in _fields:
             if key in attrs:  # if key is not inherited from parent class
@@ -77,7 +87,7 @@ class Model(object, metaclass=ModelMeta):
     def validate(cls, data):
         if not isinstance(data, dict):
             raise ValidationError(
-                "{0}: data should be a dict, but it is a {1}".foramt(cls.__name__, type(data)))
+                "{0}: data should be a dict, but it is a {1}".format(cls.__name__, type(data)))
         # validate required field
         fields_dict = dict(cls._fields)
         _optional_fields = cls._optional_fields
