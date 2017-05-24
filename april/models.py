@@ -12,6 +12,10 @@ class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
         _fields = list()
 
+        for base in bases:
+            tmp_fields = base._fields if hasattr(base, '_fields') else []
+            _fields.extend(tmp_fields)
+
         # save fields metainfo in klass._fields
         for key, ftype in attrs.items():
             if inspect.isclass(ftype):
