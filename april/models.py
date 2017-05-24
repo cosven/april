@@ -28,7 +28,8 @@ class ModelMeta(type):
                 raise TypeError('_optional_fields should be a list')
         # pop field from attributes
         for key, ftype in _fields:
-            attrs.pop(key)
+            if key in attrs:  # if key is not inherited from parent class
+                attrs.pop(key)
 
         klass = type.__new__(cls, name, bases, attrs)
         klass._fields = _fields
