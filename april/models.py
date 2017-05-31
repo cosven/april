@@ -18,9 +18,12 @@ class ModelMeta(type):
             _fields.extend(tmp_fields)
 
         # save fields metainfo in klass._fields
+        class_attrs = {}
         for key, ftype in attrs.items():
             if inspect.isclass(ftype):
                 _fields.append((key, ftype))
+            else:
+                class_attrs[key] = ftype
 
         _fields = list(set(_fields))
 
@@ -36,12 +39,7 @@ class ModelMeta(type):
                 if hasattr(base, '_optional_fields'):
                     _optional_fields.extend(base._optional_fields)
 
-        # pop field from attributes
-        for key, ftype in _fields:
-            if key in attrs:  # if key is not inherited from parent class
-                attrs.pop(key)
-
-        klass = type.__new__(cls, name, bases, attrs)
+        klass = type.__new__(cls, name, bases, class_attrs)
         klass._fields = _fields
         klass._optional_fields = _optional_fields
         return klass
@@ -63,7 +61,6 @@ class Model(object, metaclass=ModelMeta):
         user = UserModel(name='xxx')
     """
     def __init__(self, **kwargs):
-        super().__init__()
 
         self.validate(kwargs)
 
@@ -72,6 +69,10 @@ class Model(object, metaclass=ModelMeta):
             if self._is_field(key):
                 value = self.deserialize_field(key, value)
             self.__dict__[key] = value
+
+        # set all optional_fields value as None
+        for field in self._optional_fields:
+            self.__dict__[field] = None
 
         self._data = kwargs
 
