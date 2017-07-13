@@ -1,0 +1,7 @@
+recursive-include tests *
+recursive-include docs *
+recursive-include tests *.pyc
+recursive-include tests *.pyo
+recursive-include docs *.pyc
+recursive-include docs *.pyo
+prune docs/_build
