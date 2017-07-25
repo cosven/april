@@ -11,16 +11,10 @@ simplified data deserialization
 - lightweight object serialization and data deserialization
 - lightweight data validation
 
-typical usage scenario:
-
-- concise model representation
-- nested model support
-- flexibility: works well with other full-featured serialization library
-
 why april:
 
 - lightweight
-- straightforward model representation
+- straightforward/concise model representation
 
 **temporarily python3 only.**
 
