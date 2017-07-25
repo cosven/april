@@ -7,12 +7,20 @@ simplified data deserialization
 
 `april` do following things:
 
-- simple type validation
-- python object serialization and data deserialization
+- model representation
+- lightweight object serialization and data deserialization
+- lightweight data validation
 
-typical usage:
+typical usage scenario:
 
-- simple model representation
+- concise model representation
+- nested model support
+- flexibility: works well with other full-featured serialization library
+
+why april:
+
+- lightweight
+- straightforward model representation
 
 **temporarily python3 only.**
 
@@ -77,3 +85,6 @@ data = {
 song = SongModel.deserialize(data)
 print(song.artists[0].name)
 ```
+
+
+inspired by [marshmallow](http://marshmallow.readthedocs.io/en/latest/quickstart.html#deserializing-to-objects)
