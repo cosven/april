@@ -3,18 +3,9 @@
 [![Build Status](https://travis-ci.org/cosven/april.svg?branch=master)](https://travis-ci.org/cosven/april)
 [![Coverage Status](https://coveralls.io/repos/github/cosven/april/badge.svg?branch=master)](https://coveralls.io/github/cosven/april?branch=master)
 
-simplified data deserialization
+lightweight & declarative model representation
 
-`april` do following things:
-
-- model representation
-- lightweight object serialization and data deserialization
-- lightweight data validation
-
-why april:
-
-- lightweight
-- straightforward/concise model representation
+> `april` usually works along with serialization library, such as [marshmallow](http://marshmallow.readthedocs.io/en/latest/quickstart.html#deserializing-to-objects)
 
 **temporarily python3 only.**
 
@@ -33,10 +24,7 @@ class UserModel(Model):
     birthday = datetime
 
 data = dict(name='lucy', age=20, birthday=datetime.now())
-user = UserModel()
-# user = UserModel.deserialize(data)
-
-user.serialize()
+user = UserModel(**data)
 ```
 
 ### complex usage
@@ -76,9 +64,5 @@ data = {
     ]
 }
 
-song = SongModel.deserialize(data)
-print(song.artists[0].name)
+song = SongModel(**data)
 ```
-
-
-inspired by [marshmallow](http://marshmallow.readthedocs.io/en/latest/quickstart.html#deserializing-to-objects)
