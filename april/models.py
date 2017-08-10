@@ -19,11 +19,11 @@ class ModelMeta(type):
 
         # save fields metainfo in klass._fields
         class_attrs = {}
-        for key, ftype in attrs.items():
-            if inspect.isclass(ftype):
-                _fields.append((key, ftype))
+        for key, field_type in attrs.items():
+            if inspect.isclass(field_type):
+                _fields.append((key, field_type))
             else:
-                class_attrs[key] = ftype
+                class_attrs[key] = field_type
 
         _fields = list(set(_fields))
 
@@ -75,40 +75,34 @@ class Model(object, metaclass=ModelMeta):
 
     @classmethod
     def validate(cls, data):
-        if not isinstance(data, dict):
-            raise ValidationError(
-                "{0}: data should be a dict, but it is a {1}".format(cls.__name__, type(data)))
-        # validate required field
+        # check if required fields all exists
         fields_dict = dict(cls._fields)
         _optional_fields = cls._optional_fields
-        for key, ftype in fields_dict.items():
+        for key, field_type in fields_dict.items():
             if key not in _optional_fields and key not in data:
                 raise ValidationError("data missing required field: '%s'" % key)
 
+        # validate each field
         for name, value in data.items():
-            if cls._is_field(name):
+            if cls._is_a_field(name):
                 cls.validate_field(name, value)
 
     @classmethod
     def validate_field(cls, name, value):
+        """
+        validate the type of field value
+        """
         fields_dict = dict(cls._fields)
-        if not cls._is_field(name):
-            return
-
-        ftype = fields_dict[name]
-
-        if issubclass(ftype, Model):
-            ftype.validate(value)
-            return
-
-        if is_nested_type(ftype):
-            ftype.validate(value)
+        field_type = fields_dict[name]
+        if is_nested_type(field_type):
+            field_type.validate(value)
         else:
-            if not isinstance(value, ftype):
-                raise ValidationError("'%s' should be '%s'" % (value, ftype.__class__))
+            if not isinstance(value, field_type):
+                raise ValidationError("'%s' should be '%s'" % (value, field_type))
 
     @classmethod
-    def _is_field(cls, name):
+    def _is_a_field(cls, name):
+        """check if a attribute belongs to model fields"""
         return name in dict(cls._fields)
 
     def __setattr__(self, name, value):

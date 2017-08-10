@@ -49,20 +49,20 @@ class SongModel(Model):
     artists = listof(ArtistModel)
 
 
-data = {
-    'title': 'in the end',
-    'album': {
-        'name': 'in the end'
-    },
-    'artists': [
-        {
-            'name': 'Linkin Park'
-        },
-        {
-            'name': 'Fort Minor'
-        }
-    ]
+title = 'in the end'
+album = {
+    'name': 'in the end'
 }
+artists = [
+    {
+        'name': 'Linkin Park'
+    },
+    {
+        'name': 'Fort Minor'
+    }
+]
 
-song = SongModel(**data)
+album = AlbumModel(**album)
+artists = [ArtistModel(**artist) for artist in artists]
+song = SongModel(title=title, album=album, artists=artists)
 ```

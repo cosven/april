@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import inspect
-from .models import Model
 from .exceptions import ValidationError
 
 
@@ -25,10 +24,6 @@ class BaseNestedType(object):
             raise ValidationError('data should be a list')
 
         for each in data:
-            if issubclass(cls._ntype, Model):
-                cls._ntype.validate(each)
-                continue
-
             if not isinstance(each, cls._ntype):
                 raise ValidationError("list element should be '%s'" % cls._ntype)
 

@@ -20,28 +20,31 @@ class TestModel(TestCase):
         self.assertEqual(user.name, 'Tom')
         self.assertEqual(user.phones, [123, 234])
 
-#    def test_usage_2(self):
-#        class AlbumModel(Model):
-#            name = str
-#
-#        class SongModel(Model):
-#            name = str
-#            album = AlbumModel
-#
-#        song = SongModel(name='i love you', album={'name': 'years'})
-#        self.assertEqual(song.album.name, 'years')
-#
-#    def test_usage_3(self):
-#        class ArtistModel(Model):
-#            name = str
-#
-#        class SongModel(Model):
-#            name = str
-#            artists = listof(ArtistModel)
-#
-#        song = SongModel(name=u'朋友',
-#                         artists=[{'name': u'谭咏麟'}, {'name': u'周华健'}])
-#        self.assertEquals(song.artists[0].name, u'谭咏麟')
+    def test_usage_2(self):
+        class AlbumModel(Model):
+            name = str
+
+        class SongModel(Model):
+            name = str
+            album = AlbumModel
+
+        album = AlbumModel(**{'name': 'years'})
+        song = SongModel(name='i love you', album=album)
+        self.assertEqual(song.album.name, 'years')
+
+    def test_usage_3(self):
+        class ArtistModel(Model):
+            name = str
+
+        class SongModel(Model):
+            name = str
+            artists = listof(ArtistModel)
+
+        artists = [ArtistModel(**{'name': u'谭咏麟'}),
+                   ArtistModel(**{'name': u'周华健'})]
+
+        song = SongModel(name=u'朋友', artists=artists)
+        self.assertEquals(song.artists[0].name, u'谭咏麟')
 
     def test_init_with_wrong_type(self):
         class UserModel(Model):
@@ -85,7 +88,6 @@ class TestModel(TestCase):
             msg = 'hello world'
 
         UserModel.validate({'name': 'lucy', 'strict': True})
-        UserModel.validate_field('msg', 'nonono')
 
 #    def test_inherit_usage(self):
 #
