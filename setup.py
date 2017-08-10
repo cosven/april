@@ -2,12 +2,10 @@
 
 from setuptools import setup
 
-import april
-
 
 setup(
     name='april',
-    version=april.__version__,
+    version='1.0.0a0',
     description='simplified data deserialization',
     author='Cosven',
     author_email='cosven.yin@gmail.com',

@@ -64,10 +64,7 @@ class Model(object, metaclass=ModelMeta):
 
         self.validate(kwargs)
 
-        # deserialize each field
         for key, value in kwargs.items():
-            if self._is_field(key):
-                value = self.deserialize_field(key, value)
             self.__dict__[key] = value
 
         # set all optional_fields value as None
@@ -75,14 +72,6 @@ class Model(object, metaclass=ModelMeta):
             self.__dict__[field] = None
 
         self._data = kwargs
-
-    @classmethod
-    def deserialize(cls, data):
-        cls.validate(data)
-        return cls(**data)
-
-    def serialize(self):
-        return self._data
 
     @classmethod
     def validate(cls, data):
@@ -99,19 +88,6 @@ class Model(object, metaclass=ModelMeta):
         for name, value in data.items():
             if cls._is_field(name):
                 cls.validate_field(name, value)
-
-    @classmethod
-    def deserialize_field(cls, name, value):
-        fields_dict = dict(cls._fields)
-        ftype = fields_dict[name]
-
-        # if field type is subclass of Model, convert the value to
-        # instance of the subclass
-        if issubclass(ftype, Model):
-            value = ftype.deserialize(value)
-        if is_nested_type(ftype):
-            value = ftype.deserialize(value)
-        return value
 
     @classmethod
     def validate_field(cls, name, value):

@@ -20,28 +20,28 @@ class TestModel(TestCase):
         self.assertEqual(user.name, 'Tom')
         self.assertEqual(user.phones, [123, 234])
 
-    def test_usage_2(self):
-        class AlbumModel(Model):
-            name = str
-
-        class SongModel(Model):
-            name = str
-            album = AlbumModel
-
-        song = SongModel(name='i love you', album={'name': 'years'})
-        self.assertEqual(song.album.name, 'years')
-
-    def test_usage_3(self):
-        class ArtistModel(Model):
-            name = str
-
-        class SongModel(Model):
-            name = str
-            artists = listof(ArtistModel)
-
-        song = SongModel(name=u'朋友',
-                         artists=[{'name': u'谭咏麟'}, {'name': u'周华健'}])
-        self.assertEquals(song.artists[0].name, u'谭咏麟')
+#    def test_usage_2(self):
+#        class AlbumModel(Model):
+#            name = str
+#
+#        class SongModel(Model):
+#            name = str
+#            album = AlbumModel
+#
+#        song = SongModel(name='i love you', album={'name': 'years'})
+#        self.assertEqual(song.album.name, 'years')
+#
+#    def test_usage_3(self):
+#        class ArtistModel(Model):
+#            name = str
+#
+#        class SongModel(Model):
+#            name = str
+#            artists = listof(ArtistModel)
+#
+#        song = SongModel(name=u'朋友',
+#                         artists=[{'name': u'谭咏麟'}, {'name': u'周华健'}])
+#        self.assertEquals(song.artists[0].name, u'谭咏麟')
 
     def test_init_with_wrong_type(self):
         class UserModel(Model):
@@ -79,20 +79,6 @@ class TestModel(TestCase):
 
         self.assertRaises(ValidationError, UserModel, phones=['1', '2'])
 
-    def test_serialize(self):
-        class UserModel(Model):
-            name = str
-
-        user = UserModel(name='lucy')
-        data = user.serialize()
-        self.assertEqual(data['name'], 'lucy')
-
-    def test_deserialize_not_a_dict(self):
-        class UserModel(Model):
-            name = str
-
-        self.assertRaises(ValidationError, UserModel.deserialize, 'lucy')
-
     def test_validate_not_a_field_attr(self):
         class UserModel(Model):
             name = str
@@ -101,21 +87,21 @@ class TestModel(TestCase):
         UserModel.validate({'name': 'lucy', 'strict': True})
         UserModel.validate_field('msg', 'nonono')
 
-    def test_inherit_usage(self):
-
-        class CarModel(Model):
-            trade_mark = str
-
-        class BaseUserModel(Model):
-            name = str
-            car = CarModel
-
-        class UserModel(BaseUserModel):
-            age = int
-
-        user = UserModel(name='lucy', age=11, car={'trade_mark': 'benzi'})
-        self.assertEqual(user.name, 'lucy')
-        self.assertEqual(user.car.trade_mark, 'benzi')
+#    def test_inherit_usage(self):
+#
+#        class CarModel(Model):
+#            trade_mark = str
+#
+#        class BaseUserModel(Model):
+#            name = str
+#            car = CarModel
+#
+#        class UserModel(BaseUserModel):
+#            age = int
+#
+#        user = UserModel(name='lucy', age=11, car={'trade_mark': 'benzi'})
+#        self.assertEqual(user.name, 'lucy')
+#        self.assertEqual(user.car.trade_mark, 'benzi')
 
     def test_inherit_optional_feilds(self):
 

@@ -20,28 +20,6 @@ class BaseNestedType(object):
         return obj_list
 
     @classmethod
-    def deserialize(cls, value):
-        """deserialize value to listof nested type object
-
-        Example::
-
-            class ArtistModel(Model):
-                name = str
-
-            listof_ArtistModel = listof(ArtistModel)
-            artists = llistof_ArtistModel.deserialize([{'name': 'hybrid'}])
-        """
-        cls.validate(value)
-
-        if issubclass(cls._ntype, Model):
-            return [cls._ntype.deserialize(each) for each in value]
-
-        serialized_data = []
-        for each in value:
-            serialized_data.append(cls._ntype(each))
-        return serialized_data
-
-    @classmethod
     def validate(cls, data):
         if not isinstance(data, list):
             raise ValidationError('data should be a list')
