@@ -89,21 +89,23 @@ class TestModel(TestCase):
 
         UserModel.validate({'name': 'lucy', 'strict': True})
 
-#    def test_inherit_usage(self):
-#
-#        class CarModel(Model):
-#            trade_mark = str
-#
-#        class BaseUserModel(Model):
-#            name = str
-#            car = CarModel
-#
-#        class UserModel(BaseUserModel):
-#            age = int
-#
-#        user = UserModel(name='lucy', age=11, car={'trade_mark': 'benzi'})
-#        self.assertEqual(user.name, 'lucy')
-#        self.assertEqual(user.car.trade_mark, 'benzi')
+    def test_inherit_usage(self):
+
+        class CarModel(Model):
+            trade_mark = str
+
+        class BaseUserModel(Model):
+            name = str
+            car = CarModel
+
+        class UserModel(BaseUserModel):
+            age = int
+
+        user = UserModel(name='lucy',
+                         age=11,
+                         car=CarModel(**{'trade_mark': 'benzi'}))
+        self.assertEqual(user.name, 'lucy')
+        self.assertEqual(user.car.trade_mark, 'benzi')
 
     def test_inherit_optional_feilds(self):
 

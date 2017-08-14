@@ -91,14 +91,10 @@ class Model(object, metaclass=ModelMeta):
         """validate the type of field value"""
         fields_dict = dict(cls._fields)
         field_type = fields_dict[name]
-        if is_nested_type(field_type):
-            field_type.is_instance(value)
-        else:
-            if not isinstance(value, field_type):
-                raise ValidationError(
-                    'the value of field:"{}" should be "{}", got {}'.format
-                    (name, field_type, value))
-
+        if not any([is_nested_type(field_type) and field_type.is_instance(value),
+                    isinstance(value, field_type)]):
+            raise ValidationError('the value of filed:"{}" should be "{}", got {}'
+                                  .format(name, field_type, type(value)))
     @classmethod
     def is_field(cls, name):
         """check if a attribute belongs to model fields"""

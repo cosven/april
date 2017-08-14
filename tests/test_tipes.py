@@ -27,4 +27,8 @@ class TestListof(TestCase):
 
     def test_isinstance(self):
         listof_str = listof(str)
-        listof_str(['hello', 'world'])
+        self.assertFalse(listof_str.is_instance(1))
+
+    def test_validate(self):
+        listof_str = listof(str)
+        self.assertRaises(TypeError, listof_str, 1)

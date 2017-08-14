@@ -65,4 +65,5 @@ artists = [
 album = AlbumModel(**album)
 artists = [ArtistModel(**artist) for artist in artists]
 song = SongModel(title=title, album=album, artists=artists)
+song.artists[0].name
 ```
