@@ -7,15 +7,14 @@ from .exceptions import ValidationError
 
 
 class ModelMeta(type):
-    """metaclass for Models"""
 
     def __new__(cls, name, bases, attrs):
         _fields = list()
 
-        # get parent fileds
+        # get inherited fileds
         for base in bases:
-            tmp_fields = base._fields if hasattr(base, '_fields') else []
-            _fields.extend(tmp_fields)
+            inherited_fields = base._fields if hasattr(base, '_fields') else []
+            _fields.extend(inherited_fields)
 
         # save fields metainfo in klass._fields
         class_attrs = {}
@@ -27,14 +26,14 @@ class ModelMeta(type):
 
         _fields = list(set(_fields))
 
-        # validate ``_optional_fields`` value type
+        # ``_optional_fields`` should be a list or tuple
         _optional_fields = attrs.get('_optional_fields', [])
         if _optional_fields is not None:
             if not isinstance(_optional_fields, (list, tuple)):
                 raise TypeError('_optional_fields should be a list')
 
-        # if _optional_fields is not specified, try to use parent's _optional_fields
         if not _optional_fields:
+            # try to use parent's _optional_fields
             for base in reversed(bases):
                 if hasattr(base, '_optional_fields'):
                     _optional_fields.extend(base._optional_fields)
@@ -59,6 +58,7 @@ class Model(object, metaclass=ModelMeta):
             _optional_fields = ('title')
 
         user = UserModel(name='xxx')
+        assert user.name == 'xxx'
     """
     def __init__(self, **kwargs):
 
@@ -71,40 +71,35 @@ class Model(object, metaclass=ModelMeta):
         for field in self._optional_fields:
             self.__dict__[field] = None
 
-        self._data = kwargs
-
     @classmethod
     def validate(cls, data):
-        # check if required fields all exists
+
+        # check if all required fields exists
         fields_dict = dict(cls._fields)
         _optional_fields = cls._optional_fields
         for key, field_type in fields_dict.items():
             if key not in _optional_fields and key not in data:
-                raise ValidationError("data missing required field: '%s'" % key)
+                raise ValidationError('field:"{}" is required'.format(key))
 
         # validate each field
         for name, value in data.items():
-            if cls._is_a_field(name):
+            if cls.is_field(name):
                 cls.validate_field(name, value)
 
     @classmethod
     def validate_field(cls, name, value):
-        """
-        validate the type of field value
-        """
+        """validate the type of field value"""
         fields_dict = dict(cls._fields)
         field_type = fields_dict[name]
         if is_nested_type(field_type):
-            field_type.validate(value)
+            field_type.is_instance(value)
         else:
             if not isinstance(value, field_type):
-                raise ValidationError("'%s' should be '%s'" % (value, field_type))
+                raise ValidationError(
+                    'the value of field:"{}" should be "{}", got {}'.format
+                    (name, field_type, value))
 
     @classmethod
-    def _is_a_field(cls, name):
+    def is_field(cls, name):
         """check if a attribute belongs to model fields"""
         return name in dict(cls._fields)
-
-    def __setattr__(self, name, value):
-        """modify self._data when field attr changes"""
-        object.__setattr__(self, name, value)
