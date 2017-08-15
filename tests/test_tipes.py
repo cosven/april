@@ -29,6 +29,10 @@ class TestListof(TestCase):
         listof_str = listof(str)
         self.assertFalse(listof_str.is_instance(1))
 
+#     def test_isinstance_2(self):
+#         listof_str = listof(str)
+#         self.assertTrue(isinstance(['h', 'e'], listof_str))
+#
     def test_validate(self):
         listof_str = listof(str)
         self.assertRaises(TypeError, listof_str, 1)

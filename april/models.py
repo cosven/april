@@ -59,17 +59,31 @@ class Model(object, metaclass=ModelMeta):
 
         user = UserModel(name='xxx')
         assert user.name == 'xxx'
+
+        user2 = UserModel(user)
+        assert user2.name = 'xxx'
     """
-    def __init__(self, **kwargs):
+    def __init__(self, model=None, **kwargs):
+        context = dict()
+        fields_dict = dict(self._fields)
 
-        self.validate(kwargs)
+        if model is not None:
+            for field_name, _ in self._fields:
+                context[field_name] = getattr(model, field_name)
 
-        for key, value in kwargs.items():
-            self.__dict__[key] = value
+        context.update(kwargs)
+        self.validate(context)
+
+        for key, value in context.items():
+            if key in fields_dict:
+                self.__dict__[key] = fields_dict[key](value)
+            else:
+                self.__dict__[key] = value
 
         # set all optional_fields value as None
-        for field in self._optional_fields:
-            self.__dict__[field] = None
+        for field_name in self._optional_fields:
+            if field_name not in self.__dict__:
+                self.__dict__[field_name] = None
 
     @classmethod
     def validate(cls, data):

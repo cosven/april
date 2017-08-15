@@ -46,6 +46,20 @@ class TestModel(TestCase):
         song = SongModel(name=u'朋友', artists=artists)
         self.assertEquals(song.artists[0].name, u'谭咏麟')
 
+#     def test_usage_4(self):
+#         class ArtistModel(Model):
+#             name = str
+#
+#         class SongModel(Model):
+#             name = str
+#             artists = listof(ArtistModel)
+#
+#         artists = [{'name': u'谭咏麟'}, {'name': u'周华健'}]
+#
+#         song = SongModel(name=u'朋友', artists=artists)
+#         self.assertEquals(song.artists[0].name, u'谭咏麟')
+
+
     def test_init_with_wrong_type(self):
         class UserModel(Model):
             name = str
@@ -131,3 +145,26 @@ class TestModel(TestCase):
             _optional_fields = ['age']
 
         self.assertRaises(ValidationError, UserModel, age=11)
+
+    def test_init_with_optional_fields(self):
+        class User(Model):
+            name = str
+            age = int
+
+            _optional_fields = ['age']
+
+        user = User(name='Tom', age=10)
+        self.assertTrue(user.age, 10)
+
+    def test_init_with_model(self):
+        class User(Model):
+            name = str
+
+        user = User(name='seven')
+        self.assertTrue(user.name, 'seven')
+
+        user2 = User(user)
+        self.assertTrue(user2.name, 'seven')
+
+        user3 = User(user, name='mos')
+        self.assertTrue(user3.name, 'mos')

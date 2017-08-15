@@ -20,11 +20,11 @@ class BaseContainerType(object):
         return objects
 
     @classmethod
-    def is_instance(cls, data):
-        if not isinstance(data, (list, set, tuple)):
+    def is_instance(cls, objects):
+        if not isinstance(objects, (list, set, tuple)):
             return False
 
-        for each in data:
+        for each in objects:
             if not isinstance(each, cls.nested_type):
                 return False
         return True
