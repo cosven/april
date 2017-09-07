@@ -1,27 +1,22 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from setuptools import setup
 
 
 setup(
     name='april',
-    version='1.0.0a0',
-    description='simplified data deserialization',
+    version='2.0.0',
+    description='simplified obj',
     author='Cosven',
     author_email='cosven.yin@gmail.com',
-    packages=['april'],
-    package_data={
-        '': []
-        },
+    py_modules=['april'],
     url='https://github.com/cosven/april',
-    keywords=['python', 'deserialization', 'serialization'],
+    keywords=['struct', 'model'],
     classifiers=(
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3 :: Only',
         ),
-    install_requires=[
-    ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     entry_points={

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from six import with_metaclass
+
 
 class StructMeta(type):
 
@@ -8,7 +10,7 @@ class StructMeta(type):
 
         # get inherited fileds
         for base in bases:
-            inherited_fields = base._fields if hasattr(base, '_fields') else []
+            inherited_fields = getattr(base, '_fields', [])
             _fields.extend(inherited_fields)
 
         _fields.extend(attrs.get('_fields', []))
@@ -20,7 +22,7 @@ class StructMeta(type):
         return klass
 
 
-class Struct(object):
+class Struct(object, with_metaclass(StructMeta)):
     """base class for data models
 
     Usage::
@@ -36,8 +38,6 @@ class Struct(object):
         user2 = UserModel(user)
         assert user2.name = 'xxx'
     """
-
-    __metaclass__ = StructMeta
 
     def __init__(self, obj=None, **kwargs):
         for field in self._fields:

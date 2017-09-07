@@ -19,8 +19,14 @@ from datetime import datetime
 from april import Struct
 
 
-class UserModel(Struct):
+class User(Struct):
     _fields = ['name', 'age', 'birthday']
 
-user = UserModel(name='lucy', age=20, birthday=datetime.now())
+user = UserModel(name='lucy', age=20, birthday='2017-09-08')
+
+class VIP(User):
+    _fields = ['level']
+
+vip = VIP(user, level=1)
+vip.name == lucy
 ```
