@@ -15,55 +15,12 @@ lightweight & declarative model representation
 
 ```python
 from datetime import datetime
-from april import Model
+
+from april import Struct
 
 
-class UserModel(Model):
-    name = str
-    age = int
-    birthday = datetime
+class UserModel(Struct):
+    _fields = ['name', 'age', 'birthday']
 
-data = dict(name='lucy', age=20, birthday=datetime.now())
-user = UserModel(**data)
-```
-
-### complex usage
-
-```python
-
-from april import Model
-from april.tipes import listof
-
-
-class ArtistModel(Model):
-    name = str
-
-
-class AlbumModel(Model):
-    name = str
-
-
-class SongModel(Model):
-    title = str
-    album = AlbumModel
-    artists = listof(ArtistModel)
-
-
-title = 'in the end'
-album = {
-    'name': 'in the end'
-}
-artists = [
-    {
-        'name': 'Linkin Park'
-    },
-    {
-        'name': 'Fort Minor'
-    }
-]
-
-album = AlbumModel(**album)
-artists = [ArtistModel(**artist) for artist in artists]
-song = SongModel(title=title, album=album, artists=artists)
-song.artists[0].name
+user = UserModel(name='lucy', age=20, birthday=datetime.now())
 ```
