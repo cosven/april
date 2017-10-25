@@ -3,7 +3,7 @@
 from april import Struct
 
 
-def test_usage():
+def test_basic_usage():
     class User(Struct):
         _fields = ['name', 'age']
 
@@ -12,7 +12,7 @@ def test_usage():
     assert user.age == 10
 
 
-def test_inherit():
+def test_inherit_usage():
     class Lang(Struct):
         _fields = ['name']
 
@@ -49,11 +49,21 @@ def test_customize_init():
 
     u = VIP(name='haha', level=1)
     assert u.name == 'haha'
-    assert u.name == 'haha'
+
+
+def test_customize_init_2():
+    class User(Struct):
+        _fields = ['name', 'age']
+
+        def __init__(self, name, **kwargs):
+            super(User, self).__init__(name=name, **kwargs)
+
+    user = User(name='hello', age=10)
+    assert user.name == 'hello'
+    assert user.age == 10
 
 
 def test_mix():
-    print('test-mix')
     class User(Struct):
         _fields = ['name', 'age', 'birthday']
 
@@ -66,3 +76,26 @@ def test_mix():
 
     assert vip.name == 'lucy'
     assert vip.level == 1
+
+
+def test_mixins():
+    class User(Struct):
+        _fields = ['name', 'age', 'birthday']
+
+    class Hacker(Struct):
+        _fields = ['alias']
+
+    class Student(User, Hacker):
+        pass
+
+    s = Student(name='ysw', alias='cosven')
+    assert s.name == 'ysw'
+    assert s.alias == 'cosven'
+
+
+def test_init_with_part_kwargs():
+    class User(Struct):
+        _fields = ['name', 'age', 'birthday']
+
+    u = User(name='ysw')
+    assert u.age is None
