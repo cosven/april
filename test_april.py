@@ -73,9 +73,13 @@ def test_mix():
         _fields = ['level']
 
     vip = VIP(user, level=1)
+    vip2 = VIP(name='ysw', level=1)
 
     assert vip.name == 'lucy'
     assert vip.level == 1
+    assert vip2.name == 'ysw'
+    assert vip2.level == 1
+    assert vip2.age is None
 
 
 def test_mixins():
