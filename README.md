@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/cosven/april.svg?branch=master)](https://travis-ci.org/cosven/april)
 [![Coverage Status](https://coveralls.io/repos/github/cosven/april/badge.svg?branch=master)](https://coveralls.io/github/cosven/april?branch=master)
 
-lightweight & declarative model/struct representation
+lightweight & declarative model/struct representation, work as you expected it to
 
 ## Usage
 
@@ -19,12 +19,14 @@ class User(Struct):
     _fields = ['name', 'age', 'birthday']
 
 user = UserModel(name='lucy', age=20, birthday='2017-09-08')
+user2 = UserModel(name='hey')
 
 class VIP(User):
     _fields = ['level']
 
 vip = VIP(user, level=1)
 vip.name == lucy
+user2.age is None
 ```
 
 
